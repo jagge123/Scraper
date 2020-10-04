@@ -2,7 +2,9 @@
 using AngleSharp.Dom;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ScraperApp.Http;
 using System;
+using System.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,8 +17,12 @@ namespace ScraperApp
             var builder = new HostBuilder()
                           .ConfigureServices((hostContext, services) =>
                           {
-                              services.AddHttpClient();
+                          services.AddHttpClient("tretton", t =>
+                          {
+                              t.BaseAddress = new Uri("https://tretton37.com");
+                          });
                               services.AddTransient<ScraperApp>();
+                              services.AddTransient<IClient, Client>();
                           }).UseConsoleLifetime();
 
             var host = builder.Build();
