@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using ScraperApp.Http;
 using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -34,13 +35,15 @@ namespace ScraperApp
                 try
                 {
                     var myService = services.GetRequiredService<ScraperApp>();
+                    var stopWatch = new Stopwatch();
+                    stopWatch.Start();
                     var result = await myService.Run();
-
+                    stopWatch.Stop();
                     foreach (var res in result)
                     {
                         Console.WriteLine(res);
                     }
-                    
+                    Console.WriteLine($"Time elapsed: {stopWatch.ElapsedMilliseconds} ms");
                     Console.Read();
                 }
                 catch (Exception ex)
