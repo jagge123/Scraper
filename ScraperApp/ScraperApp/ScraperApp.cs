@@ -2,6 +2,7 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using HtmlAgilityPack;
+using ScraperApp.Files;
 using ScraperApp.Http;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace ScraperApp
         public async Task<List<string>> Run()
         {
             //Create root
-            CreateRootFolder("tretton37");
+            RootFolder = FileHandler.CreateRootFolder("tretton37");
 
 
             while(LinksToHandle.Count > 0)
@@ -52,6 +53,7 @@ namespace ScraperApp
                 //Jag har hanterat alla dessa länkar
                 HandledLinks.AddRange(LinksToHandle);
                 LinksToHandle.Clear();
+                //Kan jag hantera dessa parallelt?
                 foreach (var taskResult in taskResults.Result)
                 {
                     //Jag behöver hantera dessa länkarna
@@ -89,28 +91,18 @@ namespace ScraperApp
             return Link.GetLinks(document);
         }
 
-        public void CreateRootFolder(string folderName)
-        {
-            var workingDir = Environment.CurrentDirectory;
-            var projectDirectory = Directory.GetParent(workingDir).Parent.Parent.FullName;
-            var rootPath = Path.Combine(projectDirectory, folderName);
-            Directory.CreateDirectory(rootPath);
-            RootFolder = rootPath;
-        }
-
+        //Jobba på denna metoden
         public void CreateDirAndSave(string path, string fileName, string document)
         {
-            var newPath = path.Replace("/", "");
-            var folderPath = Path.Combine(RootFolder, newPath);
+            // /blog/something.html
+            // /content
+            var fileHandler = new FileHandler(RootFolder);
+            string folderPath = fileHandler.CreateFolderPath(path);
             Directory.CreateDirectory(folderPath);
             //Save file
 
             var newName = fileName.Replace("/", "") + ".html";
-            var existingName = Path.Combine(folderPath, newName);
-            if (!File.Exists(existingName))
-            {
-                File.WriteAllText(existingName, document);
-            }            
+            fileHandler.CreateAndWrite(document, folderPath, newName);
         }
     }
 }
