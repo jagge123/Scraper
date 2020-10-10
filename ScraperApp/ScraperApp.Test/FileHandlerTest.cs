@@ -14,10 +14,21 @@ namespace ScraperApp.Test
             string folderPath, string expected)
         {
             var rootFolder = FileHandler.CreateRootFolder(rootFolderName);
-
             var fileHandler = new FileHandler(rootFolder);
 
             var actual = fileHandler.CreateFolderPath(folderPath);
+
+            Assert.Equal(expected, actual);
+        }
+        [Theory] //C:\src\Scraper\ScraperApp\ScraperApp\tretton37
+        [InlineData("C:\\what\\Scraper\\App\\Something\\whatever")]
+        [InlineData("C:\\what\\whatever")]
+        [InlineData("C:\\what\\Scraper\\App\\Something\\whatever.html")]
+        public void CreateFileName_Should_Return_FileName_With_Html_Ending(string input)
+        {
+            var fileHandler = new FileHandler(null);
+            var expected = "whatever.html";
+            var actual = fileHandler.CreateFileName(input);
 
             Assert.Equal(expected, actual);
         }

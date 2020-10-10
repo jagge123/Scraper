@@ -31,8 +31,6 @@ namespace ScraperApp
         {
             //Create root
             RootFolder = FileHandler.CreateRootFolder("tretton37");
-
-
             while(LinksToHandle.Count > 0)
             {
                 var tasks = new List<Task<List<string>>>();
@@ -69,40 +67,22 @@ namespace ScraperApp
             Console.WriteLine($"Handling link: {link}");
 
             var links = new List<string>();
-            var document = GetDocument(link);
+            var document = _client.Get(link, "tretton");
             await document.ContinueWith(doc =>
             {
-                links = GetLinks(doc.Result);
+                var fileHandler = new FileHandler(RootFolder);
+                links = Link.GetLinks(doc.Result);
                 Console.WriteLine("Got linkes for link: {0}", link);
-                CreateDirAndSave(link, link, doc.Result);
+
+                var folderPath = fileHandler.CreateFolderPath(link);
+                var fileName = fileHandler.CreateFileName(folderPath);
+                Directory.CreateDirectory(folderPath);
+                fileHandler.CreateAndWrite(doc.Result, folderPath, fileName);
             });
+
+
             await Task.WhenAll(document);
             return links;
-        }
-
-        public async Task<string> GetDocument(string path)
-        {
-            //Hämta HTML
-            return await _client.Get(path, "tretton");          
-        }
-
-        public List<string> GetLinks(string document)
-        {
-            return Link.GetLinks(document);
-        }
-
-        //Jobba på denna metoden
-        public void CreateDirAndSave(string path, string fileName, string document)
-        {
-            // /blog/something.html
-            // /content
-            var fileHandler = new FileHandler(RootFolder);
-            string folderPath = fileHandler.CreateFolderPath(path);
-            Directory.CreateDirectory(folderPath);
-            //Save file
-
-            var newName = fileName.Replace("/", "") + ".html";
-            fileHandler.CreateAndWrite(document, folderPath, newName);
         }
     }
 }

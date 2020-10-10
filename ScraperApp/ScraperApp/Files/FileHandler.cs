@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScraperApp.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -16,26 +17,28 @@ namespace ScraperApp.Files
         }
         public string CreateFolderPath(string path)
         {
-            //Remove potential .html endings
-            var withOutHtml = Regex.Replace(path, ".html", "");
-            //Remove starting "/"
-            int index = withOutHtml.IndexOf("/");
-            var withoutStartingSlash = (index < 0)
-                ? withOutHtml
-                : withOutHtml.Remove(index, 1);
- 
-            var cleanPath = withoutStartingSlash.Replace("/", "\\");
-
+            var withOutHtmlEnding = path.RemoveHtmlEnding();
+            var withoutStartingSlash = withOutHtmlEnding.RemoveStartingSlash();
+            var cleanPath = withoutStartingSlash.ForwardSlashToDoubleBack();
             var folderPath = Path.Combine(RootFolder, cleanPath);
             return folderPath;
         }
-
-        public void CreateAndWrite(string document, string folderPath, string newName)
+        
+        public string CreateFileName(string path)
         {
-            var existingName = Path.Combine(folderPath, newName);
-            if (!File.Exists(existingName))
+            var fileName = path.Substring(path.LastIndexOf("\\") + 1);
+            if (!fileName.Contains(".html"))
+                return $"{fileName}.html";
+
+            return fileName;
+        }
+
+        public void CreateAndWrite(string document, string folderPath, string fileName)
+        {
+            var filePath = Path.Combine(folderPath, fileName);
+            if (!File.Exists(filePath))
             {
-                File.WriteAllText(existingName, document);
+                File.WriteAllText(filePath, document);
             }
         }
 
