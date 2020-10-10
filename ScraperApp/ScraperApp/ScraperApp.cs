@@ -39,6 +39,10 @@ namespace ScraperApp
                     var linkCopy = link;
                     tasks.Add(Task.Run(() => HandleLink(linkCopy)));
                 }
+                //Jag har hanterat alla dessa länkar
+                HandledLinks.AddRange(LinksToHandle);
+                LinksToHandle.Clear();
+
                 var taskResults = Task.WhenAll(tasks);
                 try
                 {
@@ -48,10 +52,6 @@ namespace ScraperApp
                 {
                     Console.WriteLine(e.Message);
                 }
-                //Jag har hanterat alla dessa länkar
-                HandledLinks.AddRange(LinksToHandle);
-                LinksToHandle.Clear();
-                //Kan jag hantera dessa parallelt?
                 foreach (var taskResult in taskResults.Result)
                 {
                     //Jag behöver hantera dessa länkarna
