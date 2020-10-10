@@ -43,20 +43,22 @@ namespace ScraperApp
                 HandledLinks.AddRange(LinksToHandle);
                 LinksToHandle.Clear();
 
-                var taskResults = Task.WhenAll(tasks);
+                await Task.WhenAll(tasks).ContinueWith(task =>
+                {
+                    foreach (var link in task.Result)
+                    {
+                        var linksToHandle = link.Except(HandledLinks).ToList();
+                        LinksToHandle.AddRange(linksToHandle);
+                    }
+
+                });
                 try
                 {
-                    taskResults.Wait();
+                    Task.WaitAll(tasks.ToArray());
                 }
-                catch (AggregateException e)
+                catch(AggregateException e)
                 {
                     Console.WriteLine(e.Message);
-                }
-                foreach (var taskResult in taskResults.Result)
-                {
-                    //Jag behöver hantera dessa länkarna
-                    var linksToHandle = taskResult.Except(HandledLinks).ToList();
-                    LinksToHandle.AddRange(linksToHandle);
                 }
             }
             return Link.Links;
