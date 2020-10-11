@@ -37,11 +37,8 @@ namespace ScraperApp
                     stopWatch.Start();
                     var result = await myService.Run();
                     stopWatch.Stop();
-                    foreach (var res in result)
-                    {
-                        Console.WriteLine(res);
-                    }
                     Console.WriteLine($"Time elapsed: {stopWatch.ElapsedMilliseconds} ms");
+                    Console.WriteLine($"Number of links resolved: {result.Count}");
                     Console.Read();
                 }
                 catch (Exception ex)
