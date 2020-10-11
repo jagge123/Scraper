@@ -1,26 +1,20 @@
 ﻿using ScraperApp.Utils;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace ScraperApp.Files
+namespace ScraperApp.Handlers
 {
-    public class FileHandler
+    public class FileHandler : IFileHandler
     {
-        public string RootFolder { get; private set; }
+        public FileHandler() { }
 
-        public FileHandler(string rootFolder)
-        {
-            RootFolder = rootFolder;
-        }
-        public string CreateFolderPath(string path)
+        public string CreateFolderPath(string path, string rootFolder)
         {
             var withOutHtmlEnding = path.RemoveHtmlEnding();
             var withoutStartingSlash = withOutHtmlEnding.RemoveStartingSlash();
             var cleanPath = withoutStartingSlash.ForwardSlashToDoubleBack();
-            var folderPath = Path.Combine(RootFolder, cleanPath);
+            var folderPath = Path.Combine(rootFolder, cleanPath);
             return folderPath;
         }
         

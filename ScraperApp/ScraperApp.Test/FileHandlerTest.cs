@@ -1,5 +1,4 @@
-using ScraperApp.Files;
-using System;
+using ScraperApp.Handlers;
 using Xunit;
 
 namespace ScraperApp.Test
@@ -14,9 +13,9 @@ namespace ScraperApp.Test
             string folderPath, string expected)
         {
             var rootFolder = FileHandler.CreateRootFolder(rootFolderName);
-            var fileHandler = new FileHandler(rootFolder);
+            var fileHandler = new FileHandler();
 
-            var actual = fileHandler.CreateFolderPath(folderPath);
+            var actual = fileHandler.CreateFolderPath(folderPath, rootFolder);
 
             Assert.Equal(expected, actual);
         }
@@ -26,7 +25,7 @@ namespace ScraperApp.Test
         [InlineData("C:\\what\\Scraper\\App\\Something\\whatever.html")]
         public void CreateFileName_Should_Return_FileName_With_Html_Ending(string input)
         {
-            var fileHandler = new FileHandler(null);
+            var fileHandler = new FileHandler();
             var expected = "whatever.html";
             var actual = fileHandler.CreateFileName(input);
 

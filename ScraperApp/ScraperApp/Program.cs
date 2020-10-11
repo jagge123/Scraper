@@ -1,13 +1,9 @@
-﻿using AngleSharp;
-using AngleSharp.Dom;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ScraperApp.Handlers;
 using ScraperApp.Http;
 using System;
-using System.Configuration;
 using System.Diagnostics;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace ScraperApp
@@ -26,6 +22,7 @@ namespace ScraperApp
                               services.AddTransient<ScraperApp>();
                               services.AddTransient<IClient, Client>();
                               services.AddTransient<ILinkHandler, LinkHandler>();
+                              services.AddTransient<IFileHandler, FileHandler>();
                           }).UseConsoleLifetime();
 
             var host = builder.Build();

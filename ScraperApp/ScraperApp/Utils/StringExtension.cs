@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace ScraperApp.Utils
 {
@@ -20,9 +17,9 @@ namespace ScraperApp.Utils
             return input.Replace("/", "\\");
         }
 
-        public static string RemoveHtmlEnding(this string inmput)
+        public static string RemoveHtmlEnding(this string input)
         {
-            return Regex.Replace(inmput, ".html", "");
+            return Regex.Replace(input, ".html", "");
         }
     }
 }
