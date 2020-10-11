@@ -19,7 +19,7 @@ namespace ScraperApp.Test
 
             Assert.Equal(expected, actual);
         }
-        [Theory] //C:\src\Scraper\ScraperApp\ScraperApp\tretton37
+        [Theory]
         [InlineData("C:\\what\\Scraper\\App\\Something\\whatever")]
         [InlineData("C:\\what\\whatever")]
         [InlineData("C:\\what\\Scraper\\App\\Something\\whatever.html")]

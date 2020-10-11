@@ -24,14 +24,13 @@ namespace ScraperApp.Handlers
 
             var links = new List<string>();
             var document = _client.Get(link, "tretton");
-            await document.ContinueWith(doc =>
+            await document.ContinueWith(antecedent =>
             {
-                links = GetLinks(doc.Result);
-
+                links = GetLinks(antecedent.Result);
                 var folderPath = _fileHandler.CreateFolderPath(link, rootFolder);
                 var fileName = _fileHandler.CreateFileName(folderPath);
                 Directory.CreateDirectory(folderPath);
-                _fileHandler.CreateAndWrite(doc.Result, folderPath, fileName);
+                _fileHandler.CreateAndWriteAsync(antecedent.Result, folderPath, fileName);
             });
 
             await Task.WhenAll(document);
@@ -41,7 +40,6 @@ namespace ScraperApp.Handlers
         public List<string> GetLinks(string document)
         {
             var hrefs = new List<string>();
-
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(document);
 

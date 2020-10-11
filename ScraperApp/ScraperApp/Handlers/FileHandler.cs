@@ -36,6 +36,23 @@ namespace ScraperApp.Handlers
             }
         }
 
+        public async Task CreateAndWriteAsync(string document, string folderPath, string fileName)
+        {
+            var filePath = Path.Combine(folderPath, fileName);
+            if (!File.Exists(filePath))
+            {
+                //Check if file is used in another process - probably not the ideal way
+                var fileIsLocked = IsFileLocked(filePath);
+                if (!fileIsLocked)
+                {
+                    using (StreamWriter writer = File.CreateText(filePath))
+                    {
+                        await writer.WriteAsync(document);
+                    }
+                }
+            }
+        }
+
         public static string CreateRootFolder(string folderName)
         {
             var workingDir = Environment.CurrentDirectory;
@@ -43,6 +60,23 @@ namespace ScraperApp.Handlers
             var rootPath = Path.Combine(projectDirectory, folderName);
             Directory.CreateDirectory(rootPath);
             return rootPath;
+        }
+
+        private bool IsFileLocked(string filename)
+        {
+            bool Locked = false;
+            try
+            {
+                FileStream fs =
+                    File.Open(filename, FileMode.OpenOrCreate,
+                    FileAccess.ReadWrite, FileShare.None);
+                fs.Close();
+            }
+            catch (IOException)
+            {
+                Locked = true;
+            }
+            return Locked;
         }
     }
 }
