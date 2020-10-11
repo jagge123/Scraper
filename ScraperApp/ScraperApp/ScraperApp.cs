@@ -3,6 +3,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using HtmlAgilityPack;
 using ScraperApp.Files;
+using ScraperApp.Handlers;
 using ScraperApp.Http;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,12 @@ namespace ScraperApp
     {
         public List<string> LinksToHandle = new List<string>() { "" };
         public List<string> HandledLinks = new List<string>();
-        private readonly IClient _client;
+        private readonly ILinkHandler _linkHandler;
         private string RootFolder;
-        public ScraperApp(IClient client)
+
+        public ScraperApp(ILinkHandler linkHandler)
         {
-            _client = client;
+            _linkHandler = linkHandler;
         }
 
         public async Task<List<string>> Run()
@@ -37,7 +39,7 @@ namespace ScraperApp
                 foreach (var link in LinksToHandle)
                 {
                     var linkCopy = link;
-                    tasks.Add(Task.Run(() => HandleLink(linkCopy)));
+                    tasks.Add(Task.Run(() => _linkHandler.HandleLink(linkCopy, RootFolder)));
                 }
                 //Jag har hanterat alla dessa länkar
                 HandledLinks.AddRange(LinksToHandle);
@@ -62,29 +64,6 @@ namespace ScraperApp
                 }
             }
             return Link.Links;
-        }
-
-        public async Task<List<string>> HandleLink(string link)
-        {
-            Console.WriteLine($"Handling link: {link}");
-
-            var links = new List<string>();
-            var document = _client.Get(link, "tretton");
-            await document.ContinueWith(doc =>
-            {
-                var fileHandler = new FileHandler(RootFolder);
-                links = Link.GetLinks(doc.Result);
-                Console.WriteLine("Got linkes for link: {0}", link);
-
-                var folderPath = fileHandler.CreateFolderPath(link);
-                var fileName = fileHandler.CreateFileName(folderPath);
-                Directory.CreateDirectory(folderPath);
-                fileHandler.CreateAndWrite(doc.Result, folderPath, fileName);
-            });
-
-
-            await Task.WhenAll(document);
-            return links;
         }
     }
 }

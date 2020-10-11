@@ -2,6 +2,7 @@
 using AngleSharp.Dom;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ScraperApp.Handlers;
 using ScraperApp.Http;
 using System;
 using System.Configuration;
@@ -24,6 +25,7 @@ namespace ScraperApp
                           });
                               services.AddTransient<ScraperApp>();
                               services.AddTransient<IClient, Client>();
+                              services.AddTransient<ILinkHandler, LinkHandler>();
                           }).UseConsoleLifetime();
 
             var host = builder.Build();
